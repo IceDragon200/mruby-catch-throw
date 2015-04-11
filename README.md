@@ -2,7 +2,7 @@ mruby-catch-throw
 =================
 An implementation of ruby's catch and throw.
 
-mrbgem.rake:
+mrb_config.rb:
 ```ruby
 MRuby::Build.new do |conf|
 ...
