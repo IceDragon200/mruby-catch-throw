@@ -1,24 +1,26 @@
 # Exception raised by a throw
 class UncaughtThrowError < ArgumentError
-  # @!attribute [r] thrown
-  #   @return [Object] thrown object, mostly a Symbol
-  attr_reader :thrown
-  # @!attribute [r] param
+  # @!attribute [r] tag
+  #   @return [Symbol] tag object, mostly a Symbol
+  attr_reader :tag
+  # @!attribute [r] value
   #   @return [Array] extra parameters passed in
-  attr_reader :param
+  attr_reader :value
 
-  # @param [Object] obj  object to throw
-  def initialize(obj, param = nil)
-    @thrown = obj
-    @param = param
-    super "uncaught throw #{obj}"
+  # @param [Symbol] obj  object to throw
+  # @param [Object] value  any object to return to the catch block
+  def initialize(tag, value = nil)
+    @tag = tag
+    @value = value
+    super "uncaught throw #{tag}"
   end
 end
 
 module Kernel
   # Throws an object, uncaught throws will bubble up through other catch blocks.
   #
-  # @param [Object] obj  object to throw
+  # @param [Symbol] tag  tag being thrown
+  # @param [Object] value  a value to return to the catch block
   # @raises [UncaughtThrowError]
   # @return [void] it will never return normally.
   #
@@ -27,14 +29,14 @@ module Kernel
   #     pitcher.wind_up
   #     throw :ball
   #   end
-  def throw(obj, arg = nil)
-    raise UncaughtThrowError.new(obj, arg)
+  def throw(tag, value = nil)
+    raise UncaughtThrowError.new(tag, value)
   end
 
   # Setup a catch block and wait for an object to be thrown, the
   # catch end without catching anything.
   #
-  # @param [Object] expected  object to catch
+  # @param [Symbol] expected  tag to catch
   # @return [void]
   #
   # @example
@@ -45,7 +47,7 @@ module Kernel
   def catch(expected)
     yield
   rescue UncaughtThrowError => ex
-    raise ex unless ex.thrown == expected
-    ex.param
+    raise ex unless ex.tag == expected
+    ex.value
   end
 end
