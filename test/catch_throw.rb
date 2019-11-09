@@ -16,7 +16,8 @@ assert 'throw and catch' do
     # this should never be set
     m = 1
   end
-  n == 5 and m == 0
+  assert_equal 5, n
+  assert_equal 0, m
 end
 
 
